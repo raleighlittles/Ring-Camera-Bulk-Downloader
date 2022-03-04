@@ -1,0 +1,23 @@
+{
+  "name": "ring-camera-aws-retriever",
+  "version": "1.0.0",
+  "description": "Description",
+  "main": "motion-capture-retrieval.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raleighlittles/Ring-Camera-AWS-Retriever.git"
+  },
+  "author": "Raleigh Littles",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raleighlittles/Ring-Camera-AWS-Retriever/issues"
+  },
+  "homepage": "https://github.com/raleighlittles/Ring-Camera-AWS-Retriever#readme"
+}

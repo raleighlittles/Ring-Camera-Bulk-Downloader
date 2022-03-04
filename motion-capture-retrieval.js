@@ -3,46 +3,25 @@
 // Ring API Setup section
 import { RingApi } from 'ring-client-api'
 
-const ringApi = new RingApi({
-  refreshToken: 'token generated with ring-auth-cli.  See https://github.com/dgreif/ring/wiki/Refresh-Tokens',
 
-  // The following are all optional. See below for details
-  cameraStatusPollingSeconds: 20,
-  cameraDingsPollingSeconds: 2,
-  locationIds: ['488e4800-fcde-4493-969b-d1a06f683102', '4bbed7a7-06df-4f18-b3af-291c89854d60']
-});
+async function fetchAllMotionEvents() {
 
-// API usage section. See: https://github.com/dgreif/ring/blob/master/examples/api-example.ts
+  const { env } = process,
+  ringApi = new RingApi({
+    // Replace with your refresh token
+    "refreshToken": "eyJhbGciOiJIUzUxMiIsImprdSI6Ii9vYXV0aC9pbnRlcm5hbC9qd2tzIiwia2lkIjoiYzEyODEwMGIiLCJ0eXAiOiJKV1QifQ.eyJpYXQiOjE2NDYzNzY5MjEsImlzcyI6IlJpbmdPYXV0aFNlcnZpY2UtcHJvZDp1cy1lYXN0LTE6NjAzZjIzNzgiLCJyZWZyZXNoX2NpZCI6InJpbmdfb2ZmaWNpYWxfYW5kcm9pZCIsInJlZnJlc2hfc2NvcGVzIjpbImNsaWVudCJdLCJyZWZyZXNoX3VzZXJfaWQiOjcwNzU1NTU4LCJybmQiOiJSSnBxcnNtX0dKNExqUSIsInNlc3Npb25faWQiOiI1MjUyMzdmZC01NmQ1LTRhZjgtYTgyMi1kNjFkMjJmMGU3YjQiLCJ0eXBlIjoicmVmcmVzaC10b2tlbiJ9.iGPCDOEPOlyODmZPpEDy1sin6vBgeg4ANhWYxrDfVPOQWcYSrI3qzw7Q5CIpfP1ZDSrXOfwMesesuAd-IbXBnA",
+  }),
+  locations = await ringApi.getLocations(),
+  location = locations[0],
+  cameras = await ringApi.getCameras(),
+  camera = cameras[0]
 
-/*
+// Locations API
+location.onConnected.subscribe((connected) => {
+  const state = connected ? 'Connected' : 'Connecting'
+  console.log(`${state} to location ${location.name} - ${location.id}`)
+})
 
-// This code assumes that there's only one location.
+}
 
-cameras = ringApi.getCameras()
-camera = cameras[0]
- const eventsResponse = camera.getEvents({
-    limit: 10,
-    kind: 'ding',
-    state: 'accepted',
-    // olderThanId: previousEventsResponse.meta.pagination_key
-    // favorites: true
-  });
-
-  console.log('Got events', eventsResponse.events[0])
-  const eventsWithRecordings = eventsResponse.events.filter(
-      (event) => event.recording_status === 'ready'
-     )
-
-    transcodedUrl = camera.getRecordingUrl(
-      eventsWithRecordings[0].ding_id_str, // MUST use the ding_id_str, not ding_id
-      {
-        transcoded: true, // get transcoded version of the video.  false by default.  transcoded has ring log and timestamp
-      }
-    )
-
-  console.log('Recording Transcoded URL', transcodedUrl)
-
-  // Now upload the video to S3 ??
-
-
-*/
+fetchAllMotionEvents().catch();
