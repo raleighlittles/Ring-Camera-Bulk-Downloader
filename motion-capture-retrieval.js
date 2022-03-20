@@ -13,12 +13,22 @@ const locations = await ringApi.getLocations();
 const camerasAtPrimaryLocation = await locations[0].cameras;
 
 for (var i = 0; i < camerasAtPrimaryLocation.length; i++) {
+  const cameraName = camerasAtPrimaryLocation[i].data.description;
   const cameraEvents = await camerasAtPrimaryLocation[i].getEvents();
   
   for (var j = 0; j < cameraEvents.events.length; j++) {
     const eventRecordingUrl = await camerasAtPrimaryLocation[i].getRecordingUrl(cameraEvents.events[j].ding_id_str, true);
-    console.log(eventRecordingUrl);
+
+    console.log(cameraName, " detected motion at ",  cameraEvents.events[j].created_at, " - video url - ", eventRecordingUrl);
+
+    // the event timestamp looks like: "2022-03-20T03:03:47Z"
+    // you want to turn that into something that can be used in the filename.
+    // final result should have the form 'YYYY-MM-DD__HHmmss'
+  
+    let eventTimestampArray = cameraEvents.events[j].created_at.split("T");
+
+    const eventDateTimeString = eventTimestampArray[0].concat(eventTimestampArray[0].replaceAll(":", "").replace("Z", ""));
     
-    // TODO: Download the video link, and then rsync
+    // TODO: Download the video link, and save it with the timestamp and the camera name
   }
 }
