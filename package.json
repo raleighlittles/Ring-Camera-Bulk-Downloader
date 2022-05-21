@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/raleighlittles/Ring-Camera-AWS-Retriever/issues"
   },
-  "homepage": "https://github.com/raleighlittles/Ring-Camera-AWS-Retriever#readme"
+  "homepage": "https://github.com/raleighlittles/Ring-Camera-AWS-Retriever#readme",
+  "dependencies": {
+    "ring-client-api": "^11.0.1"
+  }
 }

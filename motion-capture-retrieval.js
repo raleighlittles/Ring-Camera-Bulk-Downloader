@@ -1,8 +1,12 @@
 import { RingApi } from 'ring-client-api'
 
+import fs from "fs";
+import https from "https";
+
+
 let ringApi = new RingApi({
        // Replace with your refresh token
-       "refreshToken": "eyJhbGciOiJIUzUxMiIsImprdSI6Ii9vYXV0aC9pbnRlcm5hbC9qd2tzIiwia2lkIjoiYzEyODEwMGIiLCJ0eXAiOiJKV1QifQ.eyJpYXQiOjE2NDY5NDkwMjIsImlzcyI6IlJpbmdPYXV0aFNlcnZpY2UtcHJvZDp1cy1lYXN0LTE6M2Q3ZDcxOWYiLCJyZWZyZXNoX2NpZCI6InJpbmdfb2ZmaWNpYWxfYW5kcm9pZCIsInJlZnJlc2hfc2NvcGVzIjpbImNsaWVudCJdLCJyZWZyZXNoX3VzZXJfaWQiOjcwNzU1NTU4LCJybmQiOiJUTm5vQmMtNkNuS2dYZyIsInNlc3Npb25faWQiOiIzNGE1MjA5MS0yZTUwLTQxM2EtODJkNi00YzU2MzQxOTJjN2UiLCJ0eXBlIjoicmVmcmVzaC10b2tlbiJ9.7i7TGO2CXDVX3Ey8_bp3GhDup5R0_aquPW--VEs63yOU4Yp7mwEAn3MhthRvngUhAZFmhW6Jvx01gF4KTTpyUA"
+       "refreshToken": "eyJhbGciOiJIUzUxMiIsImprdSI6Ii9vYXV0aC9pbnRlcm5hbC9qd2tzIiwia2lkIjoiYzEyODEwMGIiLCJ0eXAiOiJKV1QifQ.eyJpYXQiOjE2NTMxMTcyMDYsImlzcyI6IlJpbmdPYXV0aFNlcnZpY2UtcHJvZDp1cy1lYXN0LTE6M2M3ZjhlNGIiLCJyZWZyZXNoX2NpZCI6InJpbmdfb2ZmaWNpYWxfYW5kcm9pZCIsInJlZnJlc2hfc2NvcGVzIjpbImNsaWVudCJdLCJyZWZyZXNoX3VzZXJfaWQiOjcwNzU1NTU4LCJybmQiOiJULUo2bzNDWHpMU25jZyIsInNlc3Npb25faWQiOiIxOWIyMGU1NS03Yzk3LTQ1YzctOGM4Yy1mMTcwZjc3MmMxZjUiLCJ0eXBlIjoicmVmcmVzaC10b2tlbiJ9.2fVR3mHQNVV_EJG71cuGINwk7hkhFyGKs3GxT0fTWfNTtw2k_zAB-9czXfWbA-5YaELc7HXUpNsA8uirqfq-Mg"
      });
 
 // Query all 'locations' for a ring account, and then get all cameras registered at the first location.
@@ -19,7 +23,7 @@ for (var i = 0; i < camerasAtPrimaryLocation.length; i++) {
   for (var j = 0; j < cameraEvents.events.length; j++) {
     const eventRecordingUrl = await camerasAtPrimaryLocation[i].getRecordingUrl(cameraEvents.events[j].ding_id_str, true);
 
-    console.log(cameraName, " detected motion at ",  cameraEvents.events[j].created_at, " - video url - ", eventRecordingUrl);
+    // console.log(cameraName, " detected motion at ",  cameraEvents.events[j].created_at, " - video url - ", eventRecordingUrl);
 
     // the event timestamp looks like: "2022-03-20T03:03:47Z"
     // you want to turn that into something that can be used in the filename.
@@ -30,5 +34,18 @@ for (var i = 0; i < camerasAtPrimaryLocation.length; i++) {
     const eventDateTimeString = eventTimestampArray[0].concat(eventTimestampArray[0].replaceAll(":", "").replace("Z", ""));
     
     // TODO: Download the video link, and save it with the timestamp and the camera name
+
+    const videoFilename = "ring__".concat(cameraName, "__", eventDateTimeString, ".mp4");
+
+    const file = fs.createWriteStream(videoFilename);
+    const request = https.get(eventRecordingUrl, function(response) {
+   response.pipe(file);
+
+   // after download completed close filestream
+   file.on("finish", () => {
+       file.close();
+       console.log("Download Completed");
+     });
+  });
   }
 }
