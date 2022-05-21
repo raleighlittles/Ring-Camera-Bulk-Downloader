@@ -16,6 +16,10 @@ let ringApi = new RingApi({
 const locations = await ringApi.getLocations();
 const camerasAtPrimaryLocation = await locations[0].cameras;
 
+// Read in the configuration JSON file
+let config = JSON.parse(fs.readFileSync("ring-config.json"))
+
+
 for (var i = 0; i < camerasAtPrimaryLocation.length; i++) {
   const cameraName = camerasAtPrimaryLocation[i].data.description;
   const cameraEvents = await camerasAtPrimaryLocation[i].getEvents();
@@ -37,7 +41,7 @@ for (var i = 0; i < camerasAtPrimaryLocation.length; i++) {
 
     const videoFilename = "ring__".concat(cameraName, "__", eventDateTimeString, ".mp4");
 
-    const file = fs.createWriteStream(videoFilename);
+    const file = fs.createWriteStream("".concat(config['videos_directory'], "/", videoFilename));
     const request = https.get(eventRecordingUrl, function(response) {
    response.pipe(file);
 
