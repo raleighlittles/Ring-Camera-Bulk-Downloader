@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/raleighlittles/Ring-Camera-AWS-Retriever#readme",
   "dependencies": {
-    "ring-client-api": "^11.0.1"
+    "ring-client-api": "^11.0.1",
+    "sleep": "^6.3.0"
   }
 }
